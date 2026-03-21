@@ -1,9 +1,10 @@
 from fastapi import FastAPI
 from models import Book
 import asyncio
+from book import router as book_router
 
 app = FastAPI()
-
+app.include_router(book_router, prefix="/books")
 books = []
 
 @app.get("/books/")
