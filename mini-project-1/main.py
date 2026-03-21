@@ -1,45 +1,41 @@
-from fastapi import FastAPI
-from models import Book
+from fastapi import FastAPI, Request
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
 import asyncio
+
 from book import router as book_router
 
 app = FastAPI()
+
+# Templates
+templates = Jinja2Templates(directory="templates")
+
+# Include router
 app.include_router(book_router, prefix="/books")
+
+# Home page
+@app.get("/", response_class=HTMLResponse)
+def home(request: Request):
+    return templates.TemplateResponse("home.html", {"request": request})
+
+# Books HTML page
+@app.get("/books-page", response_class=HTMLResponse)
+def books_page(request: Request):
+    return templates.TemplateResponse("book.html", {"request": request})
+
+# Async endpoint
 books = []
-
-@app.get("/books/")
-async def get_books():
-    return books
-
-@app.get("/books/{book_id}")
-async def get_book(book_id: int):
-    for book in books:
-        if book.id == book_id:
-            return book
-    return {"error": "Book not found"}
-
-@app.post("/books/")
-async def add_book(book: Book):
-    books.append(book)
-    return book
-
-@app.put("/books/{book_id}")
-async def update_book(book_id: int, updated_book: Book):
-    for i, book in enumerate(books):
-        if book.id == book_id:
-            books[i] = updated_book
-            return updated_book
-    return {"error": "Book not found"}
-
-@app.delete("/books/{book_id}")
-async def delete_book(book_id: int):
-    for book in books:
-        if book.id == book_id:
-            books.remove(book)
-            return {"message": "Book deleted"}
-    return {"error": "Book not found"}
 
 @app.get("/books/delay/")
 async def get_books_with_delay():
     await asyncio.sleep(1)
     return books
+
+
+@app.get("/home", response_class=HTMLResponse)
+def home_page(request: Request):
+    return templates.TemplateResponse("home.html", {"request": request})
+
+@app.get("/books/{book_id}/html", response_class=HTMLResponse)
+def book_html(request: Request, book_id: int):
+    return templates.TemplateResponse("book.html", {"request": request})
