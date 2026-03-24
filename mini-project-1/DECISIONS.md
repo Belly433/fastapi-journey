@@ -14,3 +14,11 @@
 ## Async
 
 The async endpoint uses await asynchio.sleep(1) to handle a request while other is waiting.
+
+## Database
+
+I used @contextmanager to manage the database connection automatically. It opens the connection when needed and closes it after use, which avoids forgetting to close it manually.
+
+The parameter check_same_thread=False allows multiple requests to use the database safely in FastAPI, since FastAPI can handle concurrent requests.
+
+With the old list, all data was lost when the server restarted because it was stored in memory. With SQLite, the data is saved in a file, so it persists even after restarting the server.
