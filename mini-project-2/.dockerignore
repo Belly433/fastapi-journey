@@ -2,8 +2,4 @@
 __pycache__/
 *.pyc
 .venv/
-mongo-data/
-.git
-.gitignore
-Dockerfile
-docker-compose.yml
+*.pyo
